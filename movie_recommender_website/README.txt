@@ -49,11 +49,11 @@ Type a movie title (for example, Avatar) and click **Find movies**.
 - `app.py` loads the CSV and builds a CountVectorizer matrix when the server starts.
 - Flask serves the website and receives the movie title from the search form.
 - The recommender calculates cosine similarity for the selected movie and returns the closest matches.
-- `templates/index.html` displays the selected movie and recommendations.
-- `static/style.css` controls the appearance.
+- `templates/index.html` displays the selected movie and recommendations.*(AI)
+- `static/style.css` controls the appearance.(AI)
 
 ## Notes
 
-- The recommendation method stays aligned with your original project: keywords + cast + genres + director, CountVectorizer, and cosine similarity.
-- Your uploaded dataset does not include movie poster image URLs, so this first version uses designed poster-style cards rather than real movie posters.
-- The app is intended for local learning/testing. Before deploying publicly, turn off Flask debug mode and add production hosting/security configuration.
+- The recommendation method --> is content based recommendation using: keywords + cast + genres + director, CountVectorizer, and cosine similarity.
+
+- The app is intended for local learning
