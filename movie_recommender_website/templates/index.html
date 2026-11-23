@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CineMatch — Movie Recommendations</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <div class="ambient ambient-one"></div>
+  <div class="ambient ambient-two"></div>
+  <header class="topbar">
+    <a class="brand" href="/"><span class="brand-mark">C</span> cine<span>match</span></a>
+    <span class="top-note">YOUR NEXT FAVORITE FILM IS WAITING</span>
+  </header>
+
+  <main class="page-shell">
+    <section class="hero">
+      <div class="eyebrow"><span></span> A smarter way to pick a movie</div>
+      <h1>Find your next<br><em>movie obsession.</em></h1>
+      <p class="hero-copy">Tell us a movie you love. We'll find films with similar stories, genres, casts and creative minds.</p>
+
+      <form class="search-panel" method="POST" action="/">
+        <label for="movie">WHICH MOVIE ARE YOU IN THE MOOD FOR?</label>
+        <div class="search-row">
+          <div class="input-wrap">
+            <span class="search-icon">⌕</span>
+            <input id="movie" name="movie" list="movie-options" placeholder="Try Avatar, The Dark Knight..." value="{{ query }}" autocomplete="off">
+            <datalist id="movie-options">
+              {% for title in movie_titles %}<option value="{{ title }}">{% endfor %}
+            </datalist>
+          </div>
+          <button type="submit">Find movies <span>↗</span></button>
+        </div>
+        <div class="search-hint">Start typing to see titles available in the dataset.</div>
+      </form>
+      {% if error %}<div class="alert">{{ error }}</div>{% endif %}
+    </section>
+
+    {% if selected_movie %}
+    <section class="results-section">
+      <div class="section-kicker">YOUR PICK</div>
+      <article class="picked-card">
+        <div class="picked-art"><div class="art-orbit"></div><span>FEATURED FILM</span><strong>{{ selected_movie.title }}</strong></div>
+        <div class="picked-info">
+          <div class="picked-meta">
+            {% if selected_movie.year %}<span>{{ selected_movie.year }}</span>{% endif %}
+            {% if selected_movie.rating %}<span class="rating">★ {{ selected_movie.rating }}</span>{% endif %}
+          </div>
+          <h2>{{ selected_movie.title }}</h2>
+          <p class="genres">{{ selected_movie.genres }}</p>
+          {% if selected_movie.director %}<p class="director">Directed by {{ selected_movie.director }}</p>{% endif %}
+          {% if selected_movie.overview %}<p class="overview">{{ selected_movie.overview }}</p>{% endif %}
+        </div>
+      </article>
+
+      <div class="recommend-heading">
+        <div><div class="section-kicker">MADE FOR YOUR TASTE</div><h2>You might also love <span>these.</span></h2></div>
+        <div class="result-count">{{ recommendations|length }} PICKS</div>
+      </div>
+      <div class="movie-grid">
+        {% for movie in recommendations %}
+        <article class="movie-card">
+          <div class="poster poster-{{ loop.index % 6 }}">
+            <span class="poster-number">{{ "%02d"|format(loop.index) }}</span>
+            <span class="poster-label">CINEMATCH PICK</span>
+            <div class="poster-title">{{ movie.title }}</div>
+          </div>
+          <div class="movie-details">
+            <div class="movie-title-row"><h3>{{ movie.title }}</h3>{% if movie.rating %}<span class="small-rating">★ {{ movie.rating }}</span>{% endif %}</div>
+            <p>{{ movie.year }}{% if movie.year and movie.director %} · {% endif %}{{ movie.director }}</p>
+            <div class="tag-row">{% for genre in movie.genres.split()[:3] %}<span>{{ genre }}</span>{% endfor %}</div>
+            {% if movie.overview %}<p class="card-overview">{{ movie.overview }}</p>{% endif %}
+            <div class="match-row"><span>SIMILARITY</span><strong>{{ movie.score }}%</strong></div>
+            <div class="match-track"><i style="width: {{ movie.score }}%"></i></div>
+          </div>
+        </article>
+        {% endfor %}
+      </div>
+    </section>
+    {% else %}
+    <section class="how-section">
+      <div class="section-kicker">HOW IT WORKS</div>
+      <div class="steps">
+        <div class="step"><span>01</span><h3>Choose a movie</h3><p>Search for a title you already enjoy.</p></div>
+        <div class="step"><span>02</span><h3>We compare</h3><p>Our model checks genres, keywords, cast and director.</p></div>
+        <div class="step"><span>03</span><h3>Discover more</h3><p>Explore movies ranked by similarity to your pick.</p></div>
+      </div>
+    </section>
+    {% endif %}
+  </main>
+  <footer><span class="brand small"><span class="brand-mark">C</span> cine<span>match</span></span><p>Built with Python · Flask · scikit-learn</p></footer>
+</body>
+</html>
